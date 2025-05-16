@@ -8,6 +8,7 @@ function App() {
   const [searchKey, setSearchKey] = useState('');
 
   const handleCardSearch = (searchKey: string) => {
+    
     setSearchKey(searchKey);
   };
 

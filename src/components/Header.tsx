@@ -8,6 +8,7 @@ const Header: React.FC<HeaderProps> = ({ onCardSearch }) => {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   const toggleSearch = () => {
+    onCardSearch('');
     setIsSearchVisible(!isSearchVisible);
   };
 

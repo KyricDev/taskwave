@@ -1,4 +1,5 @@
-import {
+import
+{
   DragDropContext,
   Draggable,
   Droppable,
@@ -12,11 +13,13 @@ import { CardLabel, Card as CardType, List as ListType } from '../types';
 import CardModal from './CardModal';
 import List from './List';
 
-interface BoardProps {
+interface BoardProps
+{
   searchKey: string;
 }
 
-const Board: React.FC<BoardProps> = ({ searchKey }) => {
+const Board: React.FC<BoardProps> = ({ searchKey }) =>
+{
   const [lists, setLists] = useState<ListType[]>([
     {
       cards: [
@@ -250,7 +253,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
   const [activeListName, setActiveListName] = useState<string>('');
   const [listID, setListID] = useState<null | string>(null);
 
-  const handleAddList = () => {
+  const handleAddList = () =>
+  {
     if (newListTitle.trim()) {
       const newList: ListType = {
         cards: [],
@@ -263,7 +267,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     setIsAddingList(false);
   };
 
-  const handleAddCard = (listId: string, title: string) => {
+  const handleAddCard = (listId: string, title: string) =>
+  {
     const newCard: CardType = {
       dateAdded: new Date(),
       description: '',
@@ -281,7 +286,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     );
   };
 
-  const handleDragEnd = (result: DropResult) => {
+  const handleDragEnd = (result: DropResult) =>
+  {
     const { destination, source, type } = result;
 
     if (!destination) return;
@@ -315,7 +321,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
       const destCards = Array.from(destList.cards);
       destCards.splice(destination.index, 0, movedCard);
 
-      const newLists = lists.map((list) => {
+      const newLists = lists.map((list) =>
+      {
         if (list.id === source.droppableId) {
           return { ...list, cards: sourceCards };
         }
@@ -329,7 +336,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     }
   };
 
-  const handleCardClick = (card: CardType) => {
+  const handleCardClick = (card: CardType) =>
+  {
     const list = lists.find((list) => list.cards.some((c) => c.id === card.id));
     if (list) {
       setActiveCard(card);
@@ -338,7 +346,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     }
   };
 
-  const handleUpdateCard = (updatedCard: CardType) => {
+  const handleUpdateCard = (updatedCard: CardType) =>
+  {
     setLists(
       lists.map((list) => ({
         ...list,
@@ -350,11 +359,13 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     setActiveCard(updatedCard);
   };
 
-  const handleCreateLabel = (name: string, color: string): CardLabel => {
+  const handleCreateLabel = (name: string, color: string): CardLabel =>
+  {
     return { color, id: uuidv4(), name };
   };
 
-  const handleEditListTitle = (listId: string, newTitle: string) => {
+  const handleEditListTitle = (listId: string, newTitle: string) =>
+  {
     setLists(
       lists.map((list) =>
         list.id === listId ? { ...list, title: newTitle } : list,
@@ -368,11 +379,13 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     }
   };
 
-  const handleRemoveList = (listId: string) => {
+  const handleRemoveList = (listId: string) =>
+  {
     setLists((prevLists) => prevLists.filter((list) => list.id !== listId));
   };
 
-  const handleSortByTitle = (listId: string, updatedCards: CardType[]) => {
+  const handleSortByTitle = (listId: string, updatedCards: CardType[]) =>
+  {
     setLists((prevLists) =>
       prevLists.map((list) =>
         list.id === listId ? { ...list, cards: updatedCards } : list,
@@ -380,12 +393,29 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
     );
   };
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     console.log('Updated lists:', lists);
   }, [lists]);
 
-  const filteredLists = React.useMemo(() => {
-    return lists;
+  const filteredLists = React.useMemo(() =>
+  {
+    const lcSearchKey = searchKey.trim().toLowerCase();
+
+    return lists.map((list) =>
+    {
+      return {
+        ...list,
+        cards: list.cards.filter((card) =>
+        {
+          return card.title.trim().toLowerCase().includes(lcSearchKey) ||
+            card.description.trim().toLowerCase().includes(lcSearchKey);
+        },)
+      };
+    }).filter((list) =>
+    {
+      return list.title.trim().toLowerCase().includes(lcSearchKey) || list.cards.length > 0;
+    });
   }, [lists, searchKey]);
 
   return (
@@ -427,7 +457,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
                       autoFocus
                       className="w-full px-2 py-1 rounded bg-[#3b3b4d] text-white border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
                       onChange={(e) => setNewListTitle(e.target.value)}
-                      onKeyDown={(e) => {
+                      onKeyDown={(e) =>
+                      {
                         if (e.key === 'Enter') {
                           handleAddList();
                         } else if (e.key === 'Escape') {
@@ -448,7 +479,8 @@ const Board: React.FC<BoardProps> = ({ searchKey }) => {
                       </button>
                       <button
                         className="text-gray-300 hover:text-white px-2 py-1 text-sm"
-                        onClick={() => {
+                        onClick={() =>
+                        {
                           setIsAddingList(false);
                           setNewListTitle('');
                         }}
