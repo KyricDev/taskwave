@@ -104,41 +104,55 @@ const List: React.FC<ListProps> = ({
     onRemoveList(list.id);
   };
 
-  const handleSortByTitle = () =>
+  const handleSortByTitle = (type: string) =>
   {
     let newCards: CardType[] = [];
 
-    if (!isTitleAscending) {
-      newCards = list.cards.sort((a, b) => a.title.trim().toLowerCase().localeCompare(b.title.trim().toLowerCase()));
+    if (type === 'title') {
+      if (!isTitleAscending) {
+        newCards = list.cards.sort((a, b) => a.title.trim().toLowerCase().localeCompare(b.title.trim().toLowerCase()));
 
-      setIsTitleAscending(true);
+        setIsTitleAscending(true);
+      }
+      else {
+        newCards = list.cards.sort((a, b) => b.title.trim().toLowerCase().localeCompare(a.title.trim().toLowerCase()));
+
+        setIsTitleAscending(false);
+      }
     }
     else {
-      newCards = list.cards.sort((a, b) => b.title.trim().toLowerCase().localeCompare(a.title.trim().toLowerCase()));
+      if (!isDateAscending) {
+        newCards = list.cards.sort((a, b) => a.dateAdded.getTime() - b.dateAdded.getTime());
 
-      setIsTitleAscending(false);
+        setIsDateAscending(true);
+      }
+      else {
+        newCards = list.cards.sort((a, b) => b.dateAdded.getTime() - a.dateAdded.getTime());
+
+        setIsDateAscending(false);
+      }
     }
 
     onSortByTitle(list.id, newCards);
   };
 
-  const handleSortByDate = () =>
-  {
-    let newCards: CardType[] = [];
+  // const handleSortByDate = () =>
+  // {
+  //   let newCards: CardType[] = [];
 
-    if (!isDateAscending) {
-      newCards = list.cards.sort((a, b) => a.dateAdded.getTime() - b.dateAdded.getTime());
+  //   if (!isDateAscending) {
+  //     newCards = list.cards.sort((a, b) => a.dateAdded.getTime() - b.dateAdded.getTime());
 
-      setIsDateAscending(true);
-    }
-    else {
-      newCards = list.cards.sort((a, b) => b.dateAdded.getTime() - a.dateAdded.getTime());
+  //     setIsDateAscending(true);
+  //   }
+  //   else {
+  //     newCards = list.cards.sort((a, b) => b.dateAdded.getTime() - a.dateAdded.getTime());
 
-      setIsDateAscending(false);
-    }
+  //     setIsDateAscending(false);
+  //   }
 
-    onSortByDate(list.id, newCards);
-  };
+  //   onSortByDate(list.id, newCards);
+  // };
 
   return (
     <div className="w-72 flex-shrink-0 max-h-full flex flex-col mr-4 rounded overflow-hidden shadow-md">
@@ -183,13 +197,13 @@ const List: React.FC<ListProps> = ({
                 </li>
                 <li
                   className="py-2 px-4 rounded cursor-pointer hover:bg-[#8d80d6]"
-                  onClick={handleSortByTitle}
+                  onClick={() => handleSortByTitle('title')}
                 >
                   Sort by title (Ascending and Descending)
                 </li>
                 <li
                   className="py-2 px-4 rounded cursor-pointer hover:bg-[#8d80d6]"
-                  onClick={handleSortByDate}
+                  onClick={() => handleSortByTitle('date')}
                 >
                   Sort by date (Ascending and Descending)
                 </li>
