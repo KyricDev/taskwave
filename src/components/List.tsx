@@ -5,13 +5,15 @@ import React, { useRef, useState } from 'react';
 import { Card as CardType, List as ListType } from '../types';
 import Card from './Card';
 
-interface ListProps {
+interface ListProps
+{
   list: ListType;
   onAddCard: (listId: string, title: string) => void;
   onCardClick: (card: CardType) => void;
   onEditListTitle: (listId: string, newTitle: string) => void;
   onRemoveList: (listId: string) => void;
   onSortByTitle: (listId: string, updatedCards: CardType[]) => void;
+  onSortByDate: (listId: string, updatedCards: CardType[]) => void;
 }
 
 const List: React.FC<ListProps> = ({
@@ -19,14 +21,20 @@ const List: React.FC<ListProps> = ({
   onAddCard,
   onCardClick,
   onEditListTitle,
-}) => {
+  onSortByTitle,
+  onSortByDate,
+}) =>
+{
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [listTitle, setListTitle] = useState(list.title);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isTitleAscending, setIsTitleAscending] = useState(false);
+  const [isDateAscending, setIsDateAscending] = useState(false);
 
-  const handleAddCard = () => {
+  const handleAddCard = () =>
+  {
     if (newCardTitle.trim()) {
       onAddCard(list.id, newCardTitle.trim());
       setNewCardTitle('');
@@ -34,7 +42,8 @@ const List: React.FC<ListProps> = ({
     setIsAddingCard(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) =>
+  {
     if (e.key === 'Enter') {
       handleAddCard();
     } else if (e.key === 'Escape') {
@@ -43,7 +52,8 @@ const List: React.FC<ListProps> = ({
     }
   };
 
-  const handleTitleEdit = () => {
+  const handleTitleEdit = () =>
+  {
     if (listTitle.trim() && listTitle !== list.title) {
       onEditListTitle(list.id, listTitle.trim());
     } else {
@@ -52,7 +62,8 @@ const List: React.FC<ListProps> = ({
     setIsEditingTitle(false);
   };
 
-  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+  const handleTitleKeyDown = (e: React.KeyboardEvent) =>
+  {
     if (e.key === 'Enter') {
       handleTitleEdit();
     } else if (e.key === 'Escape') {
@@ -61,7 +72,8 @@ const List: React.FC<ListProps> = ({
     }
   };
 
-  const getColumnColor = () => {
+  const getColumnColor = () =>
+  {
     switch (list.title.toLowerCase()) {
       case 'done':
         return 'bg-green-500';
@@ -81,16 +93,50 @@ const List: React.FC<ListProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const toggleMenu = () => {
+  const toggleMenu = () =>
+  {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const handleRemoveList = () => {
+  const handleRemoveList = () =>
+  {
     throw new Error('Function not implemented.');
   };
 
-  const handleSortByTitle = () => {
-    throw new Error('Function not implemented.');
+  const handleSortByTitle = () =>
+  {
+    let newCards: CardType[] = [];
+
+    if (!isTitleAscending) {
+      newCards = list.cards.sort((a, b) => a.title.trim().toLowerCase().localeCompare(b.title.trim().toLowerCase()));
+
+      setIsTitleAscending(true);
+    }
+    else {
+      newCards = list.cards.sort((a, b) => b.title.trim().toLowerCase().localeCompare(a.title.trim().toLowerCase()));
+
+      setIsTitleAscending(false);
+    }
+
+    onSortByTitle(list.id, newCards);
+  };
+
+  const handleSortByDate = () =>
+  {
+    let newCards: CardType[] = [];
+
+    if (!isDateAscending) {
+      newCards = list.cards.sort((a, b) => a.dateAdded.getTime() - b.dateAdded.getTime());
+
+      setIsDateAscending(true);
+    }
+    else {
+      newCards = list.cards.sort((a, b) => b.dateAdded.getTime() - a.dateAdded.getTime());
+
+      setIsDateAscending(false);
+    }
+
+    onSortByDate(list.id, newCards);
   };
 
   return (
@@ -140,7 +186,10 @@ const List: React.FC<ListProps> = ({
                 >
                   Sort by title (Ascending and Descending)
                 </li>
-                <li className="py-2 px-4 rounded cursor-pointer hover:bg-[#8d80d6]">
+                <li
+                  className="py-2 px-4 rounded cursor-pointer hover:bg-[#8d80d6]"
+                  onClick={handleSortByDate}
+                >
                   Sort by date (Ascending and Descending)
                 </li>
               </ul>
@@ -210,7 +259,8 @@ const List: React.FC<ListProps> = ({
                   </button>
                   <button
                     className="text-gray-300 hover:text-white px-2 py-1 text-sm"
-                    onClick={() => {
+                    onClick={() =>
+                    {
                       setIsAddingCard(false);
                       setNewCardTitle('');
                     }}

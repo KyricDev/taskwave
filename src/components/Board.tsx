@@ -393,6 +393,15 @@ const Board: React.FC<BoardProps> = ({ searchKey }) =>
     );
   };
 
+  const handleSortByDate = (listId: string, updatedCards: CardType[]) =>
+  {
+    setLists((prevLists) =>
+      prevLists.map((list) =>
+        list.id === listId ? { ...list, cards: updatedCards } : list,
+      ),
+    );
+  };
+
   useEffect(() =>
   {
     console.log('Updated lists:', lists);
@@ -443,6 +452,7 @@ const Board: React.FC<BoardProps> = ({ searchKey }) =>
                         onEditListTitle={handleEditListTitle}
                         onRemoveList={handleRemoveList}
                         onSortByTitle={handleSortByTitle}
+                        onSortByDate={handleSortByDate}
                       />
                     </div>
                   )}
